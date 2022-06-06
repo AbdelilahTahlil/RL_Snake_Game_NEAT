@@ -11,6 +11,6 @@ However, connection weights are not the only aspect of neural networks that con-
 tribute to their behavior. The topology, or structure, of neural networks also affects
 their functionality. Thus the purpose of evolving topologies along with weights that NEAT is based on. 
 
-For further informations about the algorithm, see the following papers [1](http://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf), [2](http://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf) and [NEAT-Python documentation page](https://neat-python.readthedocs.io/en/latest/index.html) 
+For further informations about the algorithm, see the following papers [1](http://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf), [2](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) and [NEAT-Python documentation page](https://neat-python.readthedocs.io/en/latest/index.html) 
 
 **Note:** I have previously implemented an AI agent able to play the Snake Game which is based on the [Q-Learning algorithm](https://en.wikipedia.org/wiki/Q-learning). See my [Github repository](https://github.com/AbdelilahTahlil/Reinforcement_Learning_Snake_Game) for further details
