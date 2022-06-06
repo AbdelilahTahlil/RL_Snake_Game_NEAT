@@ -1,10 +1,16 @@
-# Overview
+# Snake game using NeuroEvolution of Augmenting Topologies (NEAT)
+## Overview
 
-I am thrilled to share with you my very first Reinforcement Learning model! 
+This is a Reinforcement Learning project. The environment is the famous classic 90's "Snake Game".
 
-I have used for this first project of its kind a classic and old game we all know, the Snake Game. As it is my first time coding a python game, I was inspired by the work of Patrick Loeber and Michael Sequin. [This is the link of their version of the game and AI Model](https://github.com/python-engineer/snake-ai-pytorchhttps://github.com/python-engineer/snake-ai-pytorch). 
+The purpose of this project is to create an AI agent capable of playing the game using a [genetic algorithm (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) called NEAT (NeuroEvolution of Augmenting Topologies). This method is developed by [Kenneth O. Stanley](http://www.cs.ucf.edu/~kstanley/). 
 
-Although both our codes share many similarities, I have added my own touch and made major modifications both on the game environment and the AI agent.
+In traditional Reinforcement Learning approaches, a structure or topology is chosen for the neural network. It is usually a NN with a single hidden layer. The number of nodes (or neurons) in the hidden layer, the activation functions and the connections structure is a trial-and-error process. Thus, in fixed-topology approaches, the learning stage is to optimize the connection weights.
 
-The similarities and the differences are detailed below.
+However, connection weights are not the only aspect of neural networks that con-
+tribute to their behavior. The topology, or structure, of neural networks also affects
+their functionality. Thus the purpose of evolving topologies along with weights that NEAT is based on. 
 
+For further informations about the algorithm, see the following papers [1](http://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf), [2](http://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf) and [NEAT-Python documentation page](https://neat-python.readthedocs.io/en/latest/index.html) 
+
+**Note:** I have previously implemented an AI agent able to play the Snake Game which is based on the [Q-Learning algorithm](https://en.wikipedia.org/wiki/Q-learning). See my [Github repository](https://github.com/AbdelilahTahlil/Reinforcement_Learning_Snake_Game) for further details
