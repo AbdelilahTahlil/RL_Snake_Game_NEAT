@@ -1,8 +1,10 @@
 import os 
+import math
 
 import neat
 
 from game_ai import SnakeGameAI, Snake
+from visualize import plot_stats, plot_species
 
 
 def run_simulation(genomes, config):
@@ -13,7 +15,7 @@ def run_simulation(genomes, config):
     # game settings 
     width= 640
     height= 480
-    radars_range = 8
+    radars_range = 10
     snake_starting_x, snake_starting_y = width//2, height//2
 
     
@@ -30,7 +32,9 @@ def run_simulation(genomes, config):
     game = SnakeGameAI(nets, snakes)
 
     while True:
-        game_over, rewards = game.play()
+        game_over, still_alive, rewards = game.play()
+        #print('Still alive:', still_alive)
+        #print('Number of snakes:', len(game.snakes))
         
         i=0
         for genome_id, genome in genomes :
@@ -40,17 +44,31 @@ def run_simulation(genomes, config):
         if game_over:
             break
 
+def tanh(z):
+    z = max(-60.0, min(60.0, 2.5 * z))
+    return math.tanh(z)
 
+def relu(z):
+    return z if z > 0.0 else 0.0
 
+def elu(z):
+    return z if z > 0.0 else math.exp(z) - 1
+
+def identity(z):
+    return z
 
 if __name__ == '__main__' :
-    config_path = os.path.join('neat', 'config.txt')
+    config_path = os.path.join('config.txt')
     config = neat.config.Config(neat.DefaultGenome,
                                 neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet,
                                 neat.DefaultStagnation,
                                 config_path)
 
+    config.genome_config.add_activation('tanh', tanh)
+    config.genome_config.add_activation('relu', relu)
+    config.genome_config.add_activation('elu', elu)
+    config.genome_config.add_activation('identity', identity)
     # Create Population And Add Reporters
     population = neat.Population(config)
     population.add_reporter(neat.StdOutReporter(True))
@@ -58,4 +76,10 @@ if __name__ == '__main__' :
     population.add_reporter(stats)
     
     # Run Simulation For A Maximum of 1000 Generations
-    population.run(run_simulation, 1000)
+    winner = population.run(run_simulation, 150)
+
+    # Display the winning genome.
+    print('\nBest genome:\n{!s}'.format(winner))
+
+    plot_stats(stats, ylog=False, view=True)
+    plot_species(stats, view=True)

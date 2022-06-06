@@ -18,7 +18,7 @@ WHITE= 255, 255, 255
 BLOCK_SIZE= 20
 BLOCK_DISTANCE= 2
 #WINDOW_SIZE = BLOCK_SIZE*30
-SPEED= 100
+SPEED= 50
 
 APPLE = pygame.image.load(os.path.join('img', 'apple.png'))
 APPLE= pygame.transform.smoothscale(APPLE, (BLOCK_SIZE, BLOCK_SIZE)) 
@@ -166,6 +166,7 @@ class Snake():
 
     def move(self, direction, obstacles, apple):
         ate_apple = False
+        self.direction = direction
                 
         self.head = self.next_point(direction)
         self.body.insert(0, self.head)
@@ -180,6 +181,7 @@ class Snake():
         
         if self.is_dead(obstacles):
             self.is_alive = False
+            reward = -10
         
         self.update_radars(obstacles, apple)
         return reward, ate_apple
@@ -287,21 +289,22 @@ class SnakeGameAI:
     def update_ui(self):
         self.display.fill(BLACK)
         for snake in self.snakes:
-            for part in snake.body:
-                pygame.draw.rect(
-                    self.display,
-                    BLUE,
-                    pygame.Rect(part.x,
-                    part.y,
-                    BLOCK_SIZE-BLOCK_DISTANCE,
-                    BLOCK_SIZE-BLOCK_DISTANCE
+            if snake.is_alive:
+                for part in snake.body:
+                    pygame.draw.rect(
+                        self.display,
+                        BLUE,
+                        pygame.Rect(part.x,
+                        part.y,
+                        BLOCK_SIZE-BLOCK_DISTANCE,
+                        BLOCK_SIZE-BLOCK_DISTANCE
+                        )
                     )
-                )
-            for radar in snake.radars:
-                depart_pos = radar[0]
-                arrival_pos = radar[1]
-                pygame.draw.line(self.display, (0, 255, 0), depart_pos, arrival_pos, 1)
-                pygame.draw.circle(self.display, (0, 255, 0), arrival_pos, 5)
+                for radar in snake.radars:
+                    depart_pos = radar[0]
+                    arrival_pos = radar[1]
+                    pygame.draw.line(self.display, (0, 255, 0), depart_pos, arrival_pos, 1)
+                    pygame.draw.circle(self.display, (0, 255, 0), arrival_pos, 5)
             
         for obst in self.obstacles:
             pygame.draw.rect(
@@ -331,30 +334,31 @@ class SnakeGameAI:
                 sys.exit()
 
         still_alive = 0
-        rewards = []
+        rewards = [0]*len(self.snakes)
         for i, snake in enumerate(self.snakes) :
-            state = snake.get_state()
-            current_direction = snake.direction
-
-            output = self.nets[i].activate(state)
-            action = [0,0,0]
-            action[output.index(max(output))] = 1
-
-            # convert action to direction
-            next_direction = current_direction
-            if np.array_equal(action, [1, 0, 0]): # action = turn left
-                next_direction = (current_direction-1)%4
-            elif np.array_equal(action, [0, 0, 1]): # action = turn right
-                next_direction = (current_direction+1)%4
-
-            reward, ate_apple = snake.move(next_direction, self.obstacles, self.apple)
-            rewards.append(reward)
-
-            if ate_apple :
-                self.place_apple_and_obstacles()
-            
             if snake.is_alive:
                 still_alive += 1
+                
+                state = snake.get_state()
+                current_direction = snake.direction
+
+                output = self.nets[i].activate(state)
+                action = [0,0,0]
+                action[output.index(max(output))] = 1
+
+                # convert action to direction
+                next_direction = current_direction
+                if np.array_equal(action, [1, 0, 0]): # action = turn left
+                    next_direction = (current_direction-1)%4
+                elif np.array_equal(action, [0, 0, 1]): # action = turn right
+                    next_direction = (current_direction+1)%4
+
+                reward, ate_apple = snake.move(next_direction, self.obstacles, self.apple)
+                rewards[i] = reward
+
+                if ate_apple :
+                    self.place_apple_and_obstacles()
+                    
         
 
         # update user interface
@@ -366,5 +370,5 @@ class SnakeGameAI:
             (self.frame_iteration > 300)):
             game_over = True
 
-        return game_over, rewards
+        return game_over, still_alive, rewards
 

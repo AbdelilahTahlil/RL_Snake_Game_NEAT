@@ -151,3 +151,6 @@ Docker*.txt
 
 # AI Model
 model/
+
+# NEAT reports
+avg_fitness.svg
