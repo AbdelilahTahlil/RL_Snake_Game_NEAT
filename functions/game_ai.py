@@ -1,13 +1,17 @@
+"""
+Create the snake game environment.
+"""
+
 import sys
 import os
+import random
 
 import pygame
-import random
 import numpy as np
 
 
-pygame.init()
-font = pygame.font.Font('arial.ttf', 25)
+pygame.init() #pylint: disable=no-member
+font = pygame.font.Font('config/arial.ttf', 25)
 
 
 
@@ -21,7 +25,7 @@ BLOCK_DISTANCE= 2
 SPEED= 50
 
 APPLE = pygame.image.load(os.path.join('img', 'apple.png'))
-APPLE= pygame.transform.smoothscale(APPLE, (BLOCK_SIZE, BLOCK_SIZE)) 
+APPLE= pygame.transform.smoothscale(APPLE, (BLOCK_SIZE, BLOCK_SIZE))
 apple_rect= APPLE.get_rect()
 
 
@@ -35,7 +39,7 @@ class Direction:
     DOWN = 1
     LEFT = 2
     UP = 3
-    
+
 
 class Snake():
     def __init__(self,x,y,radars_range, window_width, window_height):
@@ -55,31 +59,58 @@ class Snake():
         self.radars =[] # list of coordinates of start point and end point of every one of the 3 radars
         self.dist_radars =[] # the distance of the closest obstacles from the radars (max = radars_range)
         self.apple_radars_dist = [] # the distance of the apple from the radars (max = radars_range)
-    
-    def update_radars(self, obstacles, apple): 
-        
+
+    def update_radars(self, obstacles, apple):
+
         # update self.dist_radars, self.apple_radars_dist
-        self._check_radars(obstacles, apple) 
+        self._check_radars(obstacles, apple)
 
         # update self.radars
         if self.direction == Direction.RIGHT:
             self.radars = [
-                (((self.head.x+BLOCK_SIZE//2), self.head.y), ((self.head.x+BLOCK_SIZE//2), self.head.y - self.dist_radars[0]*BLOCK_SIZE)),
-                (((self.head.x+BLOCK_SIZE), self.head.y+BLOCK_SIZE//2), ((self.head.x+BLOCK_SIZE*(self.dist_radars[1]+1)), self.head.y+BLOCK_SIZE//2)),
-                (((self.head.x+BLOCK_SIZE//2), self.head.y+BLOCK_SIZE), ((self.head.x+BLOCK_SIZE//2), self.head.y + (self.dist_radars[2]+1)*BLOCK_SIZE))
+                (
+                    ((self.head.x+BLOCK_SIZE//2), self.head.y),
+                    ((self.head.x+BLOCK_SIZE//2), self.head.y - self.dist_radars[0]*BLOCK_SIZE)
+                ),
+                (
+                    ((self.head.x+BLOCK_SIZE), self.head.y+BLOCK_SIZE//2),
+                    ((self.head.x+BLOCK_SIZE*(self.dist_radars[1]+1)), self.head.y+BLOCK_SIZE//2)
+                ),
+                (
+                    ((self.head.x+BLOCK_SIZE//2), self.head.y+BLOCK_SIZE),
+                    ((self.head.x+BLOCK_SIZE//2), self.head.y + (self.dist_radars[2]+1)*BLOCK_SIZE)
+                )
             ]
         elif self.direction == Direction.DOWN :
             self.radars = [
-                ((self.head.x+BLOCK_SIZE, self.head.y+BLOCK_SIZE//2), (self.head.x+BLOCK_SIZE*(self.dist_radars[0]+1), self.head.y+BLOCK_SIZE//2)),
-                ((self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE), (self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE*(self.dist_radars[1]+1))),
-                ((self.head.x, self.head.y+BLOCK_SIZE//2), (self.head.x-BLOCK_SIZE*self.dist_radars[2], self.head.y+BLOCK_SIZE//2))
+                (
+                    (self.head.x+BLOCK_SIZE, self.head.y+BLOCK_SIZE//2),
+                    (self.head.x+BLOCK_SIZE*(self.dist_radars[0]+1), self.head.y+BLOCK_SIZE//2)
+                ),
+                (
+                    (self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE),
+                    (self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE*(self.dist_radars[1]+1))
+                ),
+                (
+                    (self.head.x, self.head.y+BLOCK_SIZE//2),
+                    (self.head.x-BLOCK_SIZE*self.dist_radars[2], self.head.y+BLOCK_SIZE//2)
+                )
             ]
-        
+
         elif self.direction == Direction.LEFT:
             self.radars =  [
-                ((self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE), (self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE*(self.dist_radars[0]+1))),
-                ((self.head.x, self.head.y+BLOCK_SIZE//2), (self.head.x-BLOCK_SIZE*self.dist_radars[1], self.head.y+BLOCK_SIZE//2)),
-                ((self.head.x+BLOCK_SIZE//2, self.head.y), (self.head.x+BLOCK_SIZE//2, self.head.y-BLOCK_SIZE*(self.dist_radars[2])))
+                (
+                    (self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE),
+                    (self.head.x+BLOCK_SIZE//2, self.head.y+BLOCK_SIZE*(self.dist_radars[0]+1))
+                ),
+                (
+                    (self.head.x, self.head.y+BLOCK_SIZE//2),
+                    (self.head.x-BLOCK_SIZE*self.dist_radars[1], self.head.y+BLOCK_SIZE//2)
+                ),
+                (
+                    (self.head.x+BLOCK_SIZE//2, self.head.y),
+                    (self.head.x+BLOCK_SIZE//2, self.head.y-BLOCK_SIZE*(self.dist_radars[2]))
+                )
             ]
         elif self.direction == Direction.UP:
             self.radars = [
@@ -100,7 +131,7 @@ class Snake():
                 dist_radar_s = temp_dist_radar_s
             if temp_dist_radar_r < dist_radar_r:
                 dist_radar_r = temp_dist_radar_r
-        
+
 
         for part in self.body[1:]:
             temp_dist_radar_l, temp_dist_radar_s, temp_dist_radar_r = self._compute_radars_distance(part)
@@ -110,10 +141,10 @@ class Snake():
                 dist_radar_s = temp_dist_radar_s
             if temp_dist_radar_r < dist_radar_r:
                 dist_radar_r = temp_dist_radar_r
-        
+
         self.apple_radars_dist= self._compute_radars_distance(apple)
         self.dist_radars= (dist_radar_l, dist_radar_s, dist_radar_r)
-    
+
 
 
     def _compute_radars_distance(self, point):
@@ -128,7 +159,7 @@ class Snake():
             elif point.y==self.head.y and point.x > self.head.x:
                 if (abs(point.x-self.head.x)//BLOCK_SIZE)-1 < dist_radar_s:
                     dist_radar_s = (abs(point.x-self.head.x)//BLOCK_SIZE)-1
-        
+
         if self.direction==Direction.DOWN:
             if point.y==self.head.y and point.x > self.head.x:
                 if (abs(point.x-self.head.x)//BLOCK_SIZE)-1 < dist_radar_l:
@@ -139,7 +170,7 @@ class Snake():
             elif point.x==self.head.x and point.y > self.head.y:
                 if (abs(point.y-self.head.y)//BLOCK_SIZE)-1 < dist_radar_s:
                     dist_radar_s = (abs(point.y-self.head.y)//BLOCK_SIZE)-1
-        
+
         if self.direction==Direction.LEFT:
             if point.x==self.head.x and point.y > self.head.y:
                 if (abs(point.y-self.head.y)//BLOCK_SIZE)-1 < dist_radar_l:
@@ -150,7 +181,7 @@ class Snake():
             elif point.y==self.head.y and point.x < self.head.x:
                 if (abs(point.x-self.head.x)//BLOCK_SIZE)-1 < dist_radar_s:
                     dist_radar_s = (abs(point.x-self.head.x)//BLOCK_SIZE)-1
-        
+
         if self.direction==Direction.UP:
             if point.y==self.head.y and point.x < self.head.x:
                 if (abs(point.x-self.head.x)//BLOCK_SIZE)-1 < dist_radar_l:
@@ -167,7 +198,7 @@ class Snake():
     def move(self, direction, obstacles, apple):
         ate_apple = False
         self.direction = direction
-                
+
         self.head = self.next_point(direction)
         self.body.insert(0, self.head)
 
@@ -175,17 +206,17 @@ class Snake():
             self.head.y == apple.y):
             reward = 20
             ate_apple = True
-        else: 
+        else:
             reward = 0
             self.body.pop()
-        
+
         if self.is_dead(obstacles):
             self.is_alive = False
             reward = -10
-        
+
         self.update_radars(obstacles, apple)
         return reward, ate_apple
-    
+
     def next_point(self, direction) :
         x = self.head.x
         y = self.head.y
@@ -219,16 +250,14 @@ class Snake():
             if (self.head.x == obst.x) and (self.head.y == obst.y):
                 return True
         return False
-    
+
 
     def get_state(self) :
-        radars_l, radar_s, radar_r = self.apple_radars_dist
-        
+        radar_l, radar_s, radar_r = self.apple_radars_dist
+
         apple_l, apple_s, apple_r = self.apple_radars_dist
 
-        return [radars_l, radar_s, radar_r, apple_l, apple_s, apple_r]
-
-
+        return [radar_l, radar_s, radar_r, apple_l, apple_s, apple_r]
 
 
 
@@ -239,8 +268,7 @@ class SnakeGameAI:
         self.h = height
         self.nets = nets
         self.snakes = snakes
-        self.frame_iteration = 0 
-        #--self.score = 0
+        self.frame_iteration = 0
 
         self.display = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption('Snake Game AI')
@@ -249,11 +277,11 @@ class SnakeGameAI:
         #--self.radars_range= radars_range
         #--self.reset()
         #--self.direction = Direction.RIGHT
-        
+
         self.place_apple_and_obstacles()
         self._update_all_radars(self.obstacles, self.apple)
         self.update_ui()
-        
+
 
 
 
@@ -278,7 +306,7 @@ class SnakeGameAI:
                 y*BLOCK_SIZE
             ) for x,y in zip(list_of_x, list_of_y)
         ]
-    
+
 
     def _update_all_radars(self, obstacles, apple):
         for snake in self.snakes:
@@ -305,7 +333,7 @@ class SnakeGameAI:
                     arrival_pos = radar[1]
                     pygame.draw.line(self.display, (0, 255, 0), depart_pos, arrival_pos, 1)
                     pygame.draw.circle(self.display, (0, 255, 0), arrival_pos, 5)
-            
+
         for obst in self.obstacles:
             pygame.draw.rect(
                 self.display,
@@ -317,20 +345,16 @@ class SnakeGameAI:
                     BLOCK_SIZE-BLOCK_DISTANCE
                 )
             )
-        
-        self.display.blit(APPLE, apple_rect)
 
-        #-----text = font.render(f"Score: {self.score}. Game: {n_game}.", True, WHITE)
-        #-------self.display.blit(text, [0, 0])
+        self.display.blit(APPLE, apple_rect)
         pygame.display.flip()
 
     def play(self):
-        # action = [left, straight, right]
         self.frame_iteration += 1
 
         # check if user closed the window
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT: #pylint: disable=no-member
                 sys.exit()
 
         still_alive = 0
@@ -338,12 +362,12 @@ class SnakeGameAI:
         for i, snake in enumerate(self.snakes) :
             if snake.is_alive:
                 still_alive += 1
-                
+
                 state = snake.get_state()
                 current_direction = snake.direction
 
                 output = self.nets[i].activate(state)
-                action = [0,0,0]
+                action = [0,0,0]  # action = [left, straight, right]
                 action[output.index(max(output))] = 1
 
                 # convert action to direction
@@ -358,8 +382,8 @@ class SnakeGameAI:
 
                 if ate_apple :
                     self.place_apple_and_obstacles()
-                    
-        
+
+
 
         # update user interface
         self.update_ui()
@@ -371,4 +395,3 @@ class SnakeGameAI:
             game_over = True
 
         return game_over, still_alive, rewards
-
