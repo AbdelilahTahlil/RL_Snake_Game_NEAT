@@ -15,6 +15,7 @@ their functionality. Thus the purpose of evolving topologies along with weights 
 
 For further informations about the algorithm, see the following papers [1](http://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf), [2](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) and [NEAT-Python documentation page](https://neat-python.readthedocs.io/en/latest/index.html) 
 
+<<<<<<< HEAD
 **Note:** I have previously implemented an AI agent able to play the Snake Game which is based on the [Q-Learning algorithm](https://en.wikipedia.org/wiki/Q-learning). See my [Github repository](https://github.com/AbdelilahTahlil/Reinforcement_Learning_Snake_Game) for further details.
 
 
@@ -28,3 +29,6 @@ pip install -r requirements.txt
 3. Run the game. The arguments are optional.
 ```
 python run_game.py
+=======
+**Note:** I have previously implemented an AI agent able to play the Snake Game which is based on the [Q-Learning algorithm](https://en.wikipedia.org/wiki/Q-learning). See my [Github repository](https://github.com/AbdelilahTahlil/Reinforcement_Learning_Snake_Game) for further details
+>>>>>>> b39f29c4d32e02f33a3adb0499cecbe10bc9ccb7
