@@ -5,6 +5,10 @@
 
 This is a Reinforcement Learning project. The environment is the famous classic 90's "Snake Game".
 
+<p float="left", align="middle">
+    <img width="300" height="250" src="screenshots/snake_game_neat.gif">
+</p>
+
 The purpose of this project is to create an AI agent capable of playing the game using a [genetic algorithm (GA)](https://www.sciencedirect.com/topics/engineering/genetic-algorithm) called NEAT (NeuroEvolution of Augmenting Topologies). This method is developed by [Kenneth O. Stanley](http://www.cs.ucf.edu/~kstanley/). 
 
 In traditional Reinforcement Learning approaches, a topology (or structure) is chosen for the neural network beforehand. It is usually a NN with a single hidden layer. The number of nodes (or neurons) in the hidden layer, the activation functions and the connections structure is a trial-and-error process. Thus, in fixed-topology approaches, the learning stage is to only optimize the connection weights.
